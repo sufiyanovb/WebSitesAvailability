@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Sites>
+<h2>Доступность сайтов</h2>
+<div id="sites-list">
+    @{await Html.RenderPartialAsync("ListPartial", Model);}
+</div>
+<div id="ajax-loader" style="display: none; width: 69px; height: 89px; border: 1px solid black; position: absolute; top: 50%; left: 50%; padding: 2px;">
+    <img src="~/loader/ajax-loader.gif" width="64" height="64" /><br>
+</div>
+
+@section Scripts {
+
+
+    <script>
+
+    $(document).ready(function ($) {
+        var interval = "@ViewBag.RefreshTime";
+    var refresh = function() {
+        $.ajax({
+            url: "@Url.Action("ListPartial", "Home")",
+            cache: false,
+            beforeSend: function() {
+                $("#ajax-loader").show();
+            },
+            complete: function() {
+                $("#ajax-loader").hide();
+            },
+            success: function(response) {
+                $('#sites-list').html(response);
+                setTimeout(function() {
+                    refresh();
+                }, interval);
+            }
+        });
+    };
+    refresh();
+    });
+    </script>
+}

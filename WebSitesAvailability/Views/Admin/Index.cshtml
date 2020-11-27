@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Sites>
+
+
+<div class="row">
+    <div class="col-md-10">
+        <a class="btn btn-success" style="margin-bottom:10px" onclick="ShowPopup('@Url.Action("AddSite", "Admin")')"><i class="fa fa-plus"></i>Добавить сайт</a>
+    </div>
+</div>
+
+<div id="ListPartial">
+    @{await Html.RenderPartialAsync("ListPartial", Model);}
+</div>
+
+
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/views/home/index.js"></script>
+}
+

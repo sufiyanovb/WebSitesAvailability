@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Sites>
+
+<div class="row ">
+    <div class="col-md-12">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Сайт</th>
+                    <th>Дата последней проверки</th>
+                    <th>Доступность</th>
+                </tr>
+            </thead>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>
+                        <a href="@item.Url" target="_blank">@item.Url</a>
+                    </td>
+                    <td>@item.CheckDate</td>
+                    <td class="text-center">
+                        @((item.IsAvailable? "✓" : "-"))
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

@@ -50,7 +50,7 @@ namespace WebSitesAvailability.Models
         }
         public void Truncate()
         {
-            _context.Database.ExecuteSqlCommand(string.Format("TRUNCATE TABLE [{0}]", typeof(TEntity).Name));
+            _context.Database.ExecuteSqlRaw($"TRUNCATE TABLE [{typeof(TEntity).Name}]");
         }
     }
 }

@@ -19,26 +19,30 @@ namespace WebSitesAvailability
                     var sw = new Stopwatch();
                     sw.Start();
                     var current = 0;
+
                     Parallel.ForEach(db.Sites, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-                                       site =>
-                                       {
-                                           try
-                                           {
-                                               using (HttpWebResponse response = (HttpWebResponse)WebRequest.Create(site.Url).GetResponse())
-                                               {
-                                                   site.IsAvailable = response.StatusCode == HttpStatusCode.OK;
-                                               }
-                                           }
-                                           catch (Exception ex)
-                                           {
-                                               site.IsAvailable = false;
-                                           }
-                                           finally
-                                           {
-                                               site.CheckDate = DateTime.Now;
-                                               Interlocked.Increment(ref current);
-                                           }
-                                       });
+                                                          site =>
+                                                          {
+                                                              try
+                                                              {
+                                                                  using (HttpWebResponse response = (HttpWebResponse)WebRequest.Create(site.Url).GetResponse())
+                                                                  {
+                                                                      site.IsAvailable = response.StatusCode == HttpStatusCode.OK;
+                                                                  }
+                                                              }
+                                                              catch (Exception ex)
+                                                              {
+                                                                  site.IsAvailable = false;
+                                                              }
+                                                              finally
+                                                              {
+                                                                  site.CheckDate = DateTime.Now;
+                                                                  Interlocked.Increment(ref current);
+
+                                                                  Debug.WriteLine($"Обработано сайтов:{current}");
+
+                                                              }
+                                                          });
                     await db.SaveChangesAsync(cancellationToken);
                     sw.Stop();
 

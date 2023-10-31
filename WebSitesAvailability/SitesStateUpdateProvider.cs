@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,13 +22,14 @@ namespace WebSitesAvailability
                     var current = 0;
 
                     Parallel.ForEach(db.Sites, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-                                                          site =>
+                                                          async site =>
                                                           {
                                                               try
                                                               {
-                                                                  using (HttpWebResponse response = (HttpWebResponse)WebRequest.Create(site.Url).GetResponse())
+                                                                  using (HttpClient httpClient = new HttpClient())
                                                                   {
-                                                                      site.IsAvailable = response.StatusCode == HttpStatusCode.OK;
+                                                                      var ret = await httpClient.GetAsync(site.Url);
+                                                                      site.IsAvailable = ret.StatusCode == HttpStatusCode.OK;
                                                                   }
                                                               }
                                                               catch (Exception ex)
@@ -37,6 +39,7 @@ namespace WebSitesAvailability
                                                               finally
                                                               {
                                                                   site.CheckDate = DateTime.Now;
+
                                                                   Interlocked.Increment(ref current);
 
                                                                   Debug.WriteLine($"Обработано сайтов:{current}");
